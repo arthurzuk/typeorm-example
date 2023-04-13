@@ -71,6 +71,19 @@ class UserController {
     return res.json(usuario);
   }
 
+  public async delete(_: Request, res: Response): Promise<Response> {
+    // obtém o id do usuário que foi salvo na autorização na middleware
+    const { id } = res.locals;
+    const r = await AppDataSource
+      .createQueryBuilder()
+      .delete()
+      .from(User)
+      .where("id=:id", { id })
+      .execute()
+
+    return res.json(r)
+  }
+
   // o usuário pode atualizar somente os seus dados
   public async update(req: Request, res: Response): Promise<Response> {
     const { mail, password } = req.body;
