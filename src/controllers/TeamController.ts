@@ -5,6 +5,7 @@ import { ILike } from "typeorm";
 
 class TeamController {
 
+  //OK
   public async create(req: Request, res: Response): Promise<Response> {
     const { name } = req.body;
     console.log(req.body);
@@ -24,8 +25,8 @@ class TeamController {
     return res.json(time);
   }
 
+  //OK
   public async delete(req: Request, res: Response): Promise<Response> {
-    // obtém o id do usuário que foi salvo na autorização na middleware
     const { id } = req.body;
     const r = await AppDataSource
       .createQueryBuilder()
@@ -34,10 +35,15 @@ class TeamController {
       .where("id=:id", { id })
       .execute()
 
-    return res.json(r)
+    
+    return res.json({
+      "raw": r.raw,
+      "affected": r.affected
+     }
+    )
   }
 
-  // o usuário pode atualizar somente os seus dados
+  //OK
   public async update(req: Request, res: Response): Promise<Response> {
     const { id, name } = req.body;
     const time: any = await AppDataSource.manager.findOneBy(Team, { id }).catch((e) => {
@@ -48,9 +54,8 @@ class TeamController {
         time.name = name;
       }
       const r = await AppDataSource.manager.save(Team, time).catch((e) => {
-        // testa se o e-name é repetido
         if (/(name)[\s\S]+(already exists)/.test(e.detail)) {
-          return ({ error: 'time já existe' });
+          return ({ error: 'Time já existe' });
         }
         return e;
       })
@@ -67,8 +72,8 @@ class TeamController {
     }
   }
 
+  //OK
   public async listBySearch(req: Request, res: Response): Promise<Response> {
-    // obtém o id do usuário que foi salvo na autorização na middleware
     const { termo } = req.params;
 
     const repo = AppDataSource.getRepository(Team);
@@ -80,6 +85,7 @@ class TeamController {
     return res.json(times);
   }
 
+  //OK
   public async listAll(_: Request, res: Response): Promise<Response> {
 
     const repo = AppDataSource.getRepository(Team);
